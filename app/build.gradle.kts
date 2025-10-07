@@ -14,8 +14,8 @@ android {
         applicationId = "com.example.wodifyplus"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "6.0.0"
+        versionCode = 1
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

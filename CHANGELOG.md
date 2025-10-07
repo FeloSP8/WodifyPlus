@@ -1,8 +1,8 @@
 # Changelog
 
-## 6.0.0 (2025-10-07)
+## 1.0.0 (2025-10-07)
 
-- Migración a Kotlin 2.0.21 y KSP 2.0.21-1.0.28
+- Kotlin 2.0.21 y KSP 2.0.21-1.0.28
 - Integración completa de Chaquopy (scrapers Python) y parseo robusto con org.json
 - Actividades personalizadas (CRUD) con días y hora preferida, enable/disable
 - Home: próxima actividad destacada, navegación automática a Selección tras obtener WODs
