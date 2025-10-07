@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="14dp"
+    android:background="#303030">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Próxima Actividad"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+
+        <!-- Icono eliminado para compatibilidad de RemoteViews -->
+    </LinearLayout>
+
+    <!-- Separador usando padding (sin <View>) -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#40FFFFFF"
+        android:text=""
+        android:paddingBottom="12dp" />
+
+    <!-- No activity message (hidden by default) -->
+    <TextView
+        android:id="@+id/widget_no_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No hay actividades planificadas"
+        android:textSize="14sp"
+        android:textColor="#CCFFFFFF"
+        android:gravity="center"
+        android:padding="20dp"
+        android:visibility="gone" />
+
+    <!-- Activity content -->
+    <LinearLayout
+        android:id="@+id/widget_content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Gimnasio -->
+        <TextView
+            android:id="@+id/widget_gimnasio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CrossFit DB"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:paddingBottom="8dp" />
+
+        <!-- Fecha y hora -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp">
+
+            <!-- Iconos eliminados para compatibilidad -->
+
+            <TextView
+                android:id="@+id/widget_fecha"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lunes 01/01"
+                android:textSize="14sp"
+                android:textColor="#CCFFFFFF" />
+
+            <!-- Iconos eliminados para compatibilidad -->
+
+            <TextView
+                android:id="@+id/widget_hora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="18:00"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <!-- Separador usando TextView (sin <View>) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:text=""
+            android:background="#40FFFFFF"
+            android:paddingBottom="8dp" />
+
+        <!-- Contenido -->
+        <TextView
+            android:id="@+id/widget_contenido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Contenido del WOD"
+            android:textSize="13sp"
+            android:textColor="#E6FFFFFF"
+            android:maxLines="8"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp"
+            android:gravity="top"
+            android:minHeight="60dp" />
+    </LinearLayout>
+
+</LinearLayout>
+

@@ -1,0 +1,6 @@
+/build
+
+# Python (Chaquopy)
+src/main/python/.env
+src/main/python/__pycache__/
+*.pyc
