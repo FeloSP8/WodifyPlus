@@ -10,11 +10,13 @@ import com.example.wodifyplus.ui.screens.home.HomeScreen
 import com.example.wodifyplus.ui.screens.selection.SelectionScreen
 import com.example.wodifyplus.ui.screens.settings.SettingsScreen
 import com.example.wodifyplus.ui.screens.stats.StatsScreen
+import com.example.wodifyplus.ui.screens.weekly.WeeklyScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Selection : Screen("selection")
     object Calendar : Screen("calendar")
+    object Weekly : Screen("weekly")
     object Settings : Screen("settings")
     object Stats : Screen("stats")
 }
@@ -33,6 +35,16 @@ fun NavGraph(
             HomeScreen(
                 onNavigateToSelection = {
                     navController.navigate(Screen.Selection.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToCalendar = {
+                    navController.navigate(Screen.Calendar.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToWeekly = {
+                    navController.navigate(Screen.Weekly.route) {
                         launchSingleTop = true
                     }
                 }
@@ -57,6 +69,17 @@ fun NavGraph(
 
         composable(Screen.Calendar.route) {
             CalendarScreen(
+                onNavigateBack = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(Screen.Weekly.route) {
+            WeeklyScreen(
                 onNavigateBack = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }

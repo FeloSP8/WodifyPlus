@@ -5,17 +5,38 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wodifyplus.data.local.WodDatabase
 import com.example.wodifyplus.data.local.entities.ActivityConfigEntity
+import com.example.wodifyplus.data.repository.WodRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-    
-    private val activityConfigDao = WodDatabase.getDatabase(application).activityConfigDao()
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
+    application: Application,
+    private val activityConfigDao: com.example.wodifyplus.data.local.ActivityConfigDao,
+    private val repository: WodRepository,
+    private val exportManager: com.example.wodifyplus.data.export.ExportManager
+) : AndroidViewModel(application) {
+
+    fun exportData() {
+        viewModelScope.launch {
+            repository.allWods.first().let { wods ->
+                val file = exportManager.exportWodsToCsv(wods)
+                file?.let { exportManager.shareFile(it) }
+            }
+        }
+    }
     
     private val _activityConfigs = MutableStateFlow<List<ActivityConfigEntity>>(emptyList())
     val activityConfigs: StateFlow<List<ActivityConfigEntity>> = _activityConfigs.asStateFlow()
+    
+    private val _clearDataState = MutableStateFlow<ClearDataState>(ClearDataState.Idle)
+    val clearDataState: StateFlow<ClearDataState> = _clearDataState.asStateFlow()
     
     init {
         loadConfigs()
@@ -101,5 +122,28 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             activityConfigDao.updateConfig(config.copy(isEnabled = !config.isEnabled))
         }
     }
+    
+    fun clearAllData() {
+        viewModelScope.launch {
+            _clearDataState.value = ClearDataState.Loading
+            try {
+                repository.deleteAllWods()
+                _clearDataState.value = ClearDataState.Success("Todos los datos han sido eliminados")
+            } catch (e: Exception) {
+                _clearDataState.value = ClearDataState.Error("Error al eliminar datos: ${e.message}")
+            }
+        }
+    }
+    
+    fun resetClearDataState() {
+        _clearDataState.value = ClearDataState.Idle
+    }
+}
+
+sealed class ClearDataState {
+    object Idle : ClearDataState()
+    object Loading : ClearDataState()
+    data class Success(val message: String) : ClearDataState()
+    data class Error(val message: String) : ClearDataState()
 }
 

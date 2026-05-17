@@ -1,30 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
+
+    <!-- Calendario base -->
     <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+        android:fillColor="#2E3A59"
+        android:pathData="M18,28h72a6,6 0 0 1 6,6v50a6,6 0 0 1 -6,6H18a6,6 0 0 1 -6,-6V34a6,6 0 0 1 6,-6z"/>
+    <!-- Línea superior (barra del calendario) -->
+    <path
+        android:fillColor="#3A4768"
+        android:pathData="M12,34h84v12H12z"/>
+    <!-- Anillas -->
+    <path
+        android:fillColor="#E8EAED"
+        android:pathData="M30,22h6v12h-6zM72,22h6v12h-6z"/>
+
+    <!-- Rejilla 7 días (simplificada a 7 bloques) -->
+    <group android:translateY="52">
+        <path android:fillColor="#485674" android:pathData="M18,0h8v10h-8z"/>
+        <path android:fillColor="#485674" android:pathData="M32,0h8v10h-8z"/>
+        <path android:fillColor="#485674" android:pathData="M46,0h8v10h-8z"/>
+        <path android:fillColor="#485674" android:pathData="M60,0h8v10h-8z"/>
+        <path android:fillColor="#485674" android:pathData="M74,0h8v10h-8z"/>
+        <path android:fillColor="#485674" android:pathData="M88,0h8v10h-8z"/>
+        <path android:fillColor="#485674" android:pathData="M4,0h8v10h-8z"/>
+    </group>
+
+    <!-- Kettlebell -->
+    <path
+        android:fillColor="#D7263D"
+        android:pathData="M54,40c-8,0 -14,6 -14,14v10c0,8 6,14 14,14s14,-6 14,-14V54c0,-8 -6,-14 -14,-14z"/>
+    <path
+        android:fillColor="#B61E33"
+        android:pathData="M44,46c0,-6 5,-10 10,-10s10,4 10,10h-4c0,-3 -3,-6 -6,-6s-6,3 -6,6h-4z"/>
+
+    <!-- Check de día planificado -->
+    <path
+        android:fillColor="#00C2A8"
+        android:pathData="M30,70l6,6 12,-12 4,4 -16,16 -10,-10z"/>
 </vector>

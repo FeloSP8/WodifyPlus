@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.WodifyPlus" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- WOD Weekly Planner Theme with Splash Screen -->
+    <style name="Theme.WodifyPlus" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowSplashScreenBackground">@drawable/splash_bg</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+        <item name="android:windowSplashScreenAnimationDuration">350</item>
+        
+        <!-- Basic Colors -->
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorPrimaryDark">@color/md_theme_secondary</item>
+        <item name="colorAccent">@color/md_theme_tertiary</item>
+        <item name="android:colorBackground">@color/md_theme_background</item>
+        <item name="android:textColorPrimary">@color/md_theme_onSurface</item>
+        <item name="android:textColorSecondary">@color/md_theme_onBackground</item>
+    </style>
 </resources>

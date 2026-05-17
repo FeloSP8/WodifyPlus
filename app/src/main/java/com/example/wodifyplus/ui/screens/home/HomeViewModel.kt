@@ -17,18 +17,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-    private val repository: WodRepository
-    private val activityConfigDao = WodDatabase.getDatabase(application).activityConfigDao()
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    application: Application,
+    private val repository: WodRepository,
+    private val activityConfigDao: com.example.wodifyplus.data.local.ActivityConfigDao,
+    private val wodParser: com.example.wodifyplus.data.parser.WodParser
+) : AndroidViewModel(application) {
 
     init {
-        val wodDao = WodDatabase.getDatabase(application).wodDao()
-        repository = WodRepository(wodDao)
-
         // Inicializar Python
         if (!Python.isStarted()) {
             Python.start(AndroidPlatform(application))
@@ -72,148 +76,39 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private suspend fun parseAndSaveWods(result: String): Int {
         try {
-            // Extraer el JSON del resultado
-            val jsonStartMarker = "JSON_DATA_START"
-            val jsonEndMarker = "JSON_DATA_END"
+            val wods = wodParser.parseWods(result).toMutableList()
             
-            val jsonStart = result.indexOf(jsonStartMarker)
-            val jsonEnd = result.indexOf(jsonEndMarker)
-            
-            if (jsonStart == -1 || jsonEnd == -1) {
-                android.util.Log.e("WodParser", "No se encontraron marcadores JSON")
-                // Si no hay JSON, crear WODs de prueba
-                val wods = createSampleWods()
-                repository.insertWods(wods)
-                return wods.size
-            }
-            
-            val jsonString = result.substring(jsonStart + jsonStartMarker.length, jsonEnd).trim()
-            
-            // LOG: Imprimir JSON completo
-            android.util.Log.d("WodParser", "=== JSON COMPLETO ===")
-            android.util.Log.d("WodParser", jsonString)
-            android.util.Log.d("WodParser", "=== FIN JSON ===")
-            
-            // Usar el parser JSON nativo de Android
-            val wods = mutableListOf<Wod>()
-            
-            try {
-                val jsonObject = org.json.JSONObject(jsonString)
-                
-                // Parsear WODs de N8
-                if (jsonObject.has("wods_n8")) {
-                    val wodsN8Array = jsonObject.getJSONArray("wods_n8")
-                    android.util.Log.d("WodParser", "N8: Encontrados ${wodsN8Array.length()} WODs")
-                    
-                    for (i in 0 until wodsN8Array.length()) {
-                        val wodObj = wodsN8Array.getJSONObject(i)
-                        android.util.Log.d("WodParser", "N8 WOD $i:")
-                        android.util.Log.d("WodParser", "  Fecha: ${wodObj.optString("fecha_iso", wodObj.optString("fecha"))}")
-                        android.util.Log.d("WodParser", "  Dia: ${wodObj.optString("dia_semana")}")
-                        android.util.Log.d("WodParser", "  Contenido: ${wodObj.optString("contenido").take(50)}...")
-                        
-                        parseWodFromJson(wodObj, "N8")?.let { 
-                            wods.add(it)
-                            android.util.Log.d("WodParser", "  ✓ WOD agregado")
-                        } ?: android.util.Log.e("WodParser", "  ✗ Error parseando WOD")
-                    }
-                }
-                
-                // Parsear WODs de CrossFit DB
-                if (jsonObject.has("wods_crossfitdb")) {
-                    val wodsCrossfit = jsonObject.getJSONArray("wods_crossfitdb")
-                    android.util.Log.d("WodParser", "CrossFit DB: Encontrados ${wodsCrossfit.length()} WODs")
-                    
-                    for (i in 0 until wodsCrossfit.length()) {
-                        val wodObj = wodsCrossfit.getJSONObject(i)
-                        android.util.Log.d("WodParser", "CF DB WOD $i:")
-                        android.util.Log.d("WodParser", "  Fecha: ${wodObj.optString("fecha_iso", wodObj.optString("fecha"))}")
-                        android.util.Log.d("WodParser", "  Dia: ${wodObj.optString("dia_semana")}")
-                        
-                        parseWodFromJson(wodObj, "CrossFit DB")?.let { 
-                            wods.add(it)
-                            android.util.Log.d("WodParser", "  ✓ WOD agregado")
-                        } ?: android.util.Log.e("WodParser", "  ✗ Error parseando WOD")
-                    }
-                }
-            } catch (e: Exception) {
-                // Error parseando JSON
-                android.util.Log.e("WodParser", "Error parseando JSON: ${e.message}")
-                e.printStackTrace()
+            if (wods.isEmpty()) {
+                android.util.Log.e("WodParser", "No se encontraron WODs en el resultado, usando modo prueba")
+                val sampleWods = createSampleWods()
+                repository.updateOrInsertScrapedWods(sampleWods, listOf("CrossFit DB", "N8"))
+                val customWods = createCustomActivityWods(sampleWods)
+                repository.updateOrInsertCustomWods(customWods)
+                return sampleWods.size + customWods.size
             }
             
             // Guardar en la base de datos
             android.util.Log.d("WodParser", "Total WODs a guardar: ${wods.size}")
-            if (wods.isNotEmpty()) {
-                // IMPORTANTE: Limpiar WODs antiguos antes de insertar nuevos
-                android.util.Log.d("WodParser", "Limpiando WODs antiguos...")
-                repository.deleteAllWods()
-                
-                // Insertar nuevos WODs
-                repository.insertWods(wods)
-                android.util.Log.d("WodParser", "✓ WODs guardados en BD")
-                
-                // Crear WODs para actividades personalizadas
-                val customWods = createCustomActivityWods(wods)
-                if (customWods.isNotEmpty()) {
-                    repository.insertWods(customWods)
-                    android.util.Log.d("WodParser", "✓ ${customWods.size} WODs personalizados creados")
-                }
-                
-                return wods.size + customWods.size
-            }
             
-            android.util.Log.w("WodParser", "No hay WODs para guardar")
-            return 0
-        } catch (e: Exception) {
-            // En caso de error, crear WODs de prueba
-            android.util.Log.e("WodParser", "Error en parseAndSaveWods", e)
-            val wods = createSampleWods()
-            repository.deleteAllWods()
-            repository.insertWods(wods)
+            // IMPORTANTE: Usar merge inteligente que preserva WODs completados y seleccionados
+            repository.updateOrInsertScrapedWods(wods, listOf("CrossFit DB", "N8"))
             
-            // También crear WODs personalizados para los de prueba
+            // Crear/actualizar WODs para actividades personalizadas
             val customWods = createCustomActivityWods(wods)
             if (customWods.isNotEmpty()) {
-                repository.insertWods(customWods)
-                android.util.Log.d("WodParser", "✓ ${customWods.size} WODs personalizados creados (modo prueba)")
+                repository.updateOrInsertCustomWods(customWods)
             }
             
             return wods.size + customWods.size
-        }
-    }
-    
-    private fun parseWodFromJson(jsonObject: org.json.JSONObject, gimnasioName: String): Wod? {
-        try {
-            // Obtener fecha (probar diferentes campos)
-            val fechaStr = when {
-                jsonObject.has("fecha_iso") -> jsonObject.getString("fecha_iso")
-                jsonObject.has("fecha") -> jsonObject.getString("fecha")
-                else -> return null
-            }
-            
-            // Parsear fecha
-            val fecha = try {
-                val fechaLimpia = fechaStr.substringBefore(" ").substringBefore("T")
-                LocalDate.parse(fechaLimpia)
-            } catch (e: Exception) {
-                LocalDate.now()
-            }
-            
-            val diaSemana = jsonObject.optString("dia_semana", "")
-            val contenido = jsonObject.optString("contenido", "")
-            val contenidoHtml = jsonObject.optString("contenido_html", "")
-            
-            return Wod(
-                fecha = fecha,
-                diaSemana = diaSemana,
-                gimnasio = gimnasioName,
-                contenido = contenido,
-                contenidoHtml = contenidoHtml
-            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            return null
+            android.util.Log.e("WodParser", "Error en parseAndSaveWods", e)
+            val sampleWods = createSampleWods()
+            repository.updateOrInsertScrapedWods(sampleWods, listOf("CrossFit DB", "N8"))
+            val customWods = createCustomActivityWods(sampleWods)
+            if (customWods.isNotEmpty()) {
+                repository.updateOrInsertCustomWods(customWods)
+            }
+            return sampleWods.size + customWods.size
         }
     }
 
@@ -244,9 +139,30 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             return customWods
         }
         
-        // Obtener todas las fechas únicas de los WODs scrapeados
-        val dates = scrapedWods.map { it.fecha }.distinct().sorted()
-        android.util.Log.d("CustomWods", "Fechas de WODs scrapeados: ${dates.size}")
+        // Generar fechas desde hoy hasta el domingo de esta semana
+        val now = LocalDateTime.now()
+        val today = now.toLocalDate()
+        val currentHour = now.hour
+        
+        // Si son más de las 12 del mediodía, mostrar la semana siguiente
+        val startDate = if (currentHour >= 12) {
+            today.plusDays(1)
+        } else {
+            today
+        }
+        
+        // Calcular el domingo de la semana actual
+        val sundayOfWeek = startDate.with(DayOfWeek.SUNDAY)
+        
+        // Generar fechas desde startDate hasta el domingo
+        val dates = mutableListOf<LocalDate>()
+        var currentDate = startDate
+        while (!currentDate.isAfter(sundayOfWeek)) {
+            dates.add(currentDate)
+            currentDate = currentDate.plusDays(1)
+        }
+        
+        android.util.Log.d("CustomWods", "Fechas generadas: ${dates.size} (desde $startDate hasta $sundayOfWeek)")
         dates.forEach { 
             android.util.Log.d("CustomWods", "  - $it (${it.dayOfWeek})")
         }
@@ -276,11 +192,13 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                         fecha = date,
                         diaSemana = dayName,
                         gimnasio = config.name,
-                        contenido = "Sesión de ${config.name}\n\nConfigurado para ${dayName}s",
-                        contenidoHtml = "<div><strong>Sesión de ${config.name}</strong></div><div>Configurado para ${dayName}s</div>"
+                        contenido = "Sesión de ${config.name}\n\nConfigurado para $dayName",
+                        contenidoHtml = "<div><strong>Sesión de ${config.name}</strong></div><div>Configurado para $dayName</div>"
                     )
                     customWods.add(wod)
                     android.util.Log.d("CustomWods", "    ✓ WOD creado: ${config.name} - $dayName $date")
+                } else {
+                    android.util.Log.d("CustomWods", "    ✗ WOD NO creado: ${config.name} - $dayName $date (día no habilitado)")
                 }
             }
         }

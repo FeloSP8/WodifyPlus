@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1440dp" android:height="3040dp"
+    android:viewportWidth="1440" android:viewportHeight="3040">
+    
+    <defs>
+        <linearGradient android:id="@+id/bg" android:startX="0" android:startY="0" android:endX="1" android:endY="1">
+            <item android:offset="0.0" android:color="#0E1116"/>
+            <item android:offset="1.0" android:color="#1A1F29"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Fondo base -->
+    <rect width="1440" height="3040" fill="@id/bg"/>
+    
+    <!-- Líneas diagonales sutiles -->
+    <g android:alpha="0.06">
+        <rect x="-600" y="-1200" width="12" height="6000" fill="#FFFFFF" android:rotation="25"/>
+        <rect x="-420" y="-1200" width="12" height="6000" fill="#FFFFFF" android:rotation="25"/>
+        <rect x="-240" y="-1200" width="12" height="6000" fill="#FFFFFF" android:rotation="25"/>
+        <rect x="-60" y="-1200" width="12" height="6000" fill="#FFFFFF" android:rotation="25"/>
+        <rect x="120" y="-1200" width="12" height="6000" fill="#FFFFFF" android:rotation="25"/>
+    </g>
+</vector>

@@ -31,7 +31,12 @@ fun ActivityConfigDialog(
     var saturday by remember { mutableStateOf(config?.saturday ?: false) }
     var sunday by remember { mutableStateOf(config?.sunday ?: false) }
     var hour by remember { mutableStateOf(config?.preferredHour ?: 18) }
-    var minute by remember { mutableStateOf(config?.preferredMinute ?: 0) }
+    // Redondear minutos al múltiplo de 15 más cercano
+    var minute by remember {
+        val rawMinute = config?.preferredMinute ?: 0
+        val roundedMinute = ((rawMinute + 7.5) / 15).toInt() * 15
+        mutableStateOf(if (roundedMinute >= 60) 45 else roundedMinute)
+    }
     
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -91,35 +96,92 @@ fun ActivityConfigDialog(
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
-                
-                Row(
+
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
                 ) {
-                    Icon(Icons.Default.AccessTime, contentDescription = null)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            Icons.Default.AccessTime,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            String.format("%02d:%02d", hour, minute),
+                            style = MaterialTheme.typography.displaySmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+
+                // Selector de hora
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "Hora:",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.width(70.dp)
+                        )
+                        Slider(
+                            value = hour.toFloat(),
+                            onValueChange = { hour = it.toInt() },
+                            valueRange = 0f..23f,
+                            steps = 22,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            String.format("%02d", hour),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.width(40.dp)
+                        )
+                    }
+                }
+
+                // Selector de minutos (15 en 15)
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "Minutos:",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.width(70.dp)
+                        )
+                        Slider(
+                            value = (minute / 15).toFloat(),
+                            onValueChange = { minute = (it.toInt() * 15) },
+                            valueRange = 0f..3f,
+                            steps = 2,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            String.format("%02d", minute),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.width(40.dp)
+                        )
+                    }
                     Text(
-                        String.format("%02d:%02d", hour, minute),
-                        style = MaterialTheme.typography.titleLarge
+                        "Opciones: 00, 15, 30, 45",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        modifier = Modifier.padding(start = 70.dp)
                     )
                 }
-                
-                // Sliders para hora
-                Text("Hora:", style = MaterialTheme.typography.bodySmall)
-                Slider(
-                    value = hour.toFloat(),
-                    onValueChange = { hour = it.toInt() },
-                    valueRange = 0f..23f,
-                    steps = 0 // Sin steps para permitir todos los valores
-                )
-                
-                Text("Minutos:", style = MaterialTheme.typography.bodySmall)
-                Slider(
-                    value = minute.toFloat(),
-                    onValueChange = { minute = it.toInt() },
-                    valueRange = 0f..59f,
-                    steps = 0 // Sin steps para permitir todos los valores
-                )
             }
         },
         confirmButton = {

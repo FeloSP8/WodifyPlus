@@ -1,0 +1,142 @@
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :app
+Warning: Python version 3.10 may have fewer packages available. If you experience problems, try switching to version 3.8.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:extractDebugPythonBuildPackages
+
+> Task :app:generateDebugPythonRequirements
+Chaquopy: Installing for arm64-v8a
+Looking in indexes: https://pypi.org/simple, https://chaquo.com/pypi-13.1
+Collecting python-dotenv
+  Using cached python_dotenv-1.1.1-py3-none-any.whl (20 kB)
+Collecting requests
+  Using cached requests-2.32.5-py3-none-any.whl (64 kB)
+Collecting beautifulsoup4
+  Using cached beautifulsoup4-4.14.2-py3-none-any.whl (106 kB)
+Collecting lxml
+  Using cached https://chaquo.com/pypi-13.1/lxml/lxml-5.3.0-0-cp310-cp310-android_24_arm64_v8a.whl (1.4 MB)
+Collecting certifi>=2017.4.17
+  Using cached certifi-2025.10.5-py3-none-any.whl (163 kB)
+Collecting charset_normalizer<4,>=2
+  Using cached charset_normalizer-3.4.4-py3-none-any.whl (53 kB)
+Collecting idna<4,>=2.5
+  Using cached idna-3.11-py3-none-any.whl (71 kB)
+Collecting urllib3<3,>=1.21.1
+  Using cached urllib3-2.5.0-py3-none-any.whl (129 kB)
+Collecting typing-extensions>=4.0.0
+  Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Collecting soupsieve>1.2
+  Using cached soupsieve-2.8-py3-none-any.whl (36 kB)
+Collecting chaquopy-libxslt>=1.1.32
+  Using cached https://chaquo.com/pypi-13.1/chaquopy-libxslt/chaquopy_libxslt-1.1.32-2-py3-none-android_21_arm64_v8a.whl (178 kB)
+Collecting chaquopy-libxml2>=2.9.8
+  Using cached https://chaquo.com/pypi-13.1/chaquopy-libxml2/chaquopy_libxml2-2.9.8-2-py3-none-android_21_arm64_v8a.whl (773 kB)
+Installing collected packages: python-dotenv, certifi, charset-normalizer, idna, urllib3, requests, typing-extensions, soupsieve, beautifulsoup4, chaquopy-libxml2, chaquopy-libxslt, lxml
+Successfully installed beautifulsoup4-4.14.2 certifi-2025.10.5 chaquopy-libxml2-2.9.8 chaquopy-libxslt-1.1.32 charset-normalizer-3.4.4 idna-3.11 lxml-5.3.0 python-dotenv-1.1.1 requests-2.32.5 soupsieve-2.8 typing-extensions-4.15.0 urllib3-2.5.0
+Chaquopy: Installing for armeabi-v7a
+Looking in indexes: https://pypi.org/simple, https://chaquo.com/pypi-13.1
+Collecting chaquopy-libxml2==2.9.8
+  Using cached https://chaquo.com/pypi-13.1/chaquopy-libxml2/chaquopy_libxml2-2.9.8-2-py3-none-android_16_armeabi_v7a.whl (705 kB)
+Collecting chaquopy-libxslt==1.1.32
+  Using cached https://chaquo.com/pypi-13.1/chaquopy-libxslt/chaquopy_libxslt-1.1.32-2-py3-none-android_16_armeabi_v7a.whl (170 kB)
+Collecting lxml==5.3.0
+  Using cached https://chaquo.com/pypi-13.1/lxml/lxml-5.3.0-0-cp310-cp310-android_24_armeabi_v7a.whl (1.3 MB)
+Installing collected packages: chaquopy-libxml2, chaquopy-libxslt, lxml
+Successfully installed chaquopy-libxml2-2.9.8 chaquopy-libxslt-1.1.32 lxml-5.3.0
+Chaquopy: Installing for x86
+Looking in indexes: https://pypi.org/simple, https://chaquo.com/pypi-13.1
+Collecting chaquopy-libxml2==2.9.8
+  Using cached https://chaquo.com/pypi-13.1/chaquopy-libxml2/chaquopy_libxml2-2.9.8-2-py3-none-android_16_x86.whl (773 kB)
+Collecting chaquopy-libxslt==1.1.32
+  Using cached https://chaquo.com/pypi-13.1/chaquopy-libxslt/chaquopy_libxslt-1.1.32-2-py3-none-android_16_x86.whl (180 kB)
+Collecting lxml==5.3.0
+  Using cached https://chaquo.com/pypi-13.1/lxml/lxml-5.3.0-0-cp310-cp310-android_24_x86.whl (1.4 MB)
+Installing collected packages: chaquopy-libxml2, chaquopy-libxslt, lxml
+Successfully installed chaquopy-libxml2-2.9.8 chaquopy-libxslt-1.1.32 lxml-5.3.0
+Chaquopy: Installing for x86_64
+Looking in indexes: https://pypi.org/simple, https://chaquo.com/pypi-13.1
+Collecting chaquopy-libxml2==2.9.8
+  Using cached https://chaquo.com/pypi-13.1/chaquopy-libxml2/chaquopy_libxml2-2.9.8-2-py3-none-android_21_x86_64.whl (801 kB)
+Collecting chaquopy-libxslt==1.1.32
+  Using cached https://chaquo.com/pypi-13.1/chaquopy-libxslt/chaquopy_libxslt-1.1.32-2-py3-none-android_21_x86_64.whl (186 kB)
+Collecting lxml==5.3.0
+  Using cached https://chaquo.com/pypi-13.1/lxml/lxml-5.3.0-0-cp310-cp310-android_24_x86_64.whl (1.5 MB)
+Installing collected packages: chaquopy-libxml2, chaquopy-libxslt, lxml
+Successfully installed chaquopy-libxml2-2.9.8 chaquopy-libxslt-1.1.32 lxml-5.3.0
+
+> Task :app:mergeDebugPythonSources
+> Task :app:generateDebugPythonProxies
+> Task :app:generateDebugResValues
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:javaPreCompileDebug
+> Task :app:mergeDebugResources
+> Task :app:generateDebugPythonMiscAssets
+> Task :app:generateDebugPythonRequirementsAssets
+> Task :app:generateDebugPythonSourceAssets
+> Task :app:generateDebugPythonBuildAssets
+> Task :app:mergeDebugAssets
+> Task :app:checkDebugDuplicateClasses
+> Task :app:generateDebugPythonJniLibs
+> Task :app:mergeLibDexDebug
+> Task :app:mergeDebugJniLibFolders
+> Task :app:compressDebugAssets
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeDebugNativeLibs
+> Task :app:desugarDebugFileDependencies
+
+> Task :app:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libchaquopy_java.so, libcrypto_chaquopy.so, libpython3.10.so, libsqlite3_chaquopy.so, libssl_chaquopy.so.
+
+> Task :app:processDebugResources
+> Task :app:mergeExtDexDebug
+> Task :app:kspDebugKotlin
+
+> Task :app:compileDebugKotlin
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/components/CompleteActivityDialog.kt:43:17 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/calendar/CalendarScreen.kt:67:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/calendar/CalendarScreen.kt:73:65 'val Icons.Filled.List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/selection/SelectionScreen.kt:50:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/settings/ActivityConfigDialog.kt:67:17 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/settings/ActivityConfigDialog.kt:86:17 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/settings/SettingsScreen.kt:40:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/stats/StatsScreen.kt:42:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/stats/StatsScreen.kt:140:34 'val Icons.Filled.DirectionsRun: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.DirectionsRun.
+w: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/app/src/main/java/com/example/wodifyplus/ui/screens/weekly/WeeklyScreen.kt:52:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:processDebugJavaRes
+> Task :app:dexBuilderDebug
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+[Incubating] Problems report is available at: file:///G:/Salvado%20Octubre%202025/AndroidStudioProjects/WodifyPlus/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.11.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 34s
+45 actionable tasks: 45 executed

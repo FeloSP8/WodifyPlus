@@ -5,30 +5,38 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wodifyplus.data.local.WodDatabase
 import com.example.wodifyplus.data.models.Wod
-import com.example.wodifyplus.data.preferences.PreferencesManager
 import com.example.wodifyplus.data.repository.WodRepository
-import com.example.wodifyplus.notifications.NotificationScheduler
-import com.example.wodifyplus.widget.WodWidgetProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZonedDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
+import java.util.*
 
-class CalendarViewModel(application: Application) : AndroidViewModel(application) {
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
+@HiltViewModel
+class CalendarViewModel @Inject constructor(
+    application: Application,
     private val repository: WodRepository
-    private val preferencesManager = PreferencesManager(application)
-
-    init {
-        val wodDao = WodDatabase.getDatabase(application).wodDao()
-        repository = WodRepository(wodDao)
-    }
+) : AndroidViewModel(application) {
 
     private val _selectedWods = MutableStateFlow<List<Wod>>(emptyList())
     val selectedWods: StateFlow<List<Wod>> = _selectedWods.asStateFlow()
+    
+    private val _completedWods = MutableStateFlow<List<Wod>>(emptyList())
+    val completedWods: StateFlow<List<Wod>> = _completedWods.asStateFlow()
+    
+    private val _weeklyWods = MutableStateFlow<List<Wod>>(emptyList())
+    val weeklyWods: StateFlow<List<Wod>> = _weeklyWods.asStateFlow()
 
     fun loadSelectedWods() {
         viewModelScope.launch {
@@ -37,70 +45,78 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
             }
         }
     }
-
-    fun updateWodTime(wod: Wod, newTime: LocalTime?) {
+    
+    fun loadCompletedWods() {
         viewModelScope.launch {
-            val updatedWod = wod.copy(
-                hora = newTime,
-                notificacionActiva = newTime != null
-            )
-            repository.updateWod(updatedWod)
-            
-            // Reprogramar notificación
-            if (newTime != null) {
-                val minutesBefore = preferencesManager.notificationMinutesBefore.first()
-                NotificationScheduler.scheduleWodReminder(
-                    getApplication(),
-                    updatedWod,
-                    minutesBefore
-                )
-            } else {
-                NotificationScheduler.cancelWodReminder(getApplication(), wod.id)
+            repository.completedWods.collect { wods ->
+                _completedWods.value = wods
             }
+        }
+    }
+    
+    fun loadWeeklyWods() {
+        viewModelScope.launch {
+            val today = LocalDate.now()
+            val startOfWeek = today.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1L)
+            val endOfWeek = startOfWeek.plusDays(6)
             
-            // Actualizar widget
-            WodWidgetProvider.updateAllWidgets(getApplication())
+            repository.getCompletedWodsBetween(
+                startOfWeek.atStartOfDay(),
+                endOfWeek.atTime(23, 59, 59)
+            ).collect { completed ->
+                repository.selectedWods.first().let { selected ->
+                    val weeklySelected = selected.filter { wod ->
+                        !wod.fecha.isBefore(startOfWeek) && !wod.fecha.isAfter(endOfWeek)
+                    }
+                    _weeklyWods.value = (weeklySelected + completed).distinctBy { it.id }
+                }
+            }
+        }
+    }
+
+    fun updateWodTime(wod: Wod, time: LocalTime) {
+        viewModelScope.launch {
+            val updatedWod = wod.copy(hora = time)
+            repository.updateWod(updatedWod)
         }
     }
 
     fun deleteWodFromCalendar(wod: Wod) {
         viewModelScope.launch {
-            val updatedWod = wod.copy(
-                seleccionado = false,
-                hora = null,
-                notificacionActiva = false
-            )
+            val updatedWod = wod.copy(seleccionado = false, hora = null, notificacionActiva = false)
             repository.updateWod(updatedWod)
-            
-            // Cancelar notificación
-            NotificationScheduler.cancelWodReminder(getApplication(), wod.id)
-            
-            // Actualizar widget
-            WodWidgetProvider.updateAllWidgets(getApplication())
+        }
+    }
+
+    fun completeWod(
+        wod: Wod,
+        calorias: Int?,
+        distancia: Double?,
+        duracion: Int?,
+        notas: String?
+    ) {
+        viewModelScope.launch {
+            val completedWod = wod.copy(
+                completada = true,
+                fechaCompletado = ZonedDateTime.now(ZoneId.systemDefault()).toLocalDateTime(),
+                caloriasQuemadas = calorias,
+                distanciaKm = distancia,
+                duracionMinutos = duracion,
+                notas = notas
+            )
+            repository.updateWod(completedWod)
         }
     }
     
-    fun completeWod(
-        wod: Wod,
-        calories: Int?,
-        distance: Double?,
-        duration: Int?,
-        notes: String?
-    ) {
-        viewModelScope.launch {
-            val updatedWod = wod.copy(
-                completada = true,
-                fechaCompletado = LocalDateTime.now(),
-                caloriasQuemadas = calories,
-                distanciaKm = distance,
-                duracionMinutos = duration,
-                notas = notes
-            )
-            repository.updateWod(updatedWod)
-            
-            // Actualizar widget
-            WodWidgetProvider.updateAllWidgets(getApplication())
-        }
+    fun getCompletedWodsForDate(date: LocalDate): List<Wod> {
+        return _completedWods.value.filter { it.fecha == date }
+    }
+    
+    fun getWodsForDate(date: LocalDate): List<Wod> {
+        return _selectedWods.value.filter { it.fecha == date }
+    }
+    
+    fun getWeeklyWodsForDate(date: LocalDate): List<Wod> {
+        return _weeklyWods.value.filter { it.fecha == date }
     }
 }
-

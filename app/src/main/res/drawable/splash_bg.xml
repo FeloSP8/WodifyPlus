@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fondo base -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#0E1116"/>
+        </shape>
+    </item>
+    
+    <!-- Rayos diagonales sutiles -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient 
+                android:type="linear" 
+                android:angle="135"
+                android:startColor="#1A1F29"
+                android:centerColor="#0E1116"
+                android:endColor="#0E1116"
+                android:centerX="0.2"
+                android:centerY="0.2"/>
+        </shape>
+    </item>
+    
+    <!-- Efecto de luz adicional -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient 
+                android:type="linear" 
+                android:angle="45"
+                android:startColor="#2E3A59"
+                android:centerColor="#0E1116"
+                android:endColor="#0E1116"
+                android:centerX="0.1"
+                android:centerY="0.1"/>
+        </shape>
+    </item>
+</layer-list>
+

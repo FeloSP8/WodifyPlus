@@ -1,0 +1,59 @@
+<svg width="1080" height="240" viewBox="0 0 1080 240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hdrBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0E1116"/>
+      <stop offset="100%" stop-color="#1A1F29"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="240" fill="url(#hdrBg)"/>
+
+  <!-- Líneas diagonales muy sutiles -->
+  <g opacity="0.06">
+    <rect x="-300" y="-600" width="10" height="1500" fill="#FFFFFF" transform="rotate(25)"/>
+    <rect x="-180" y="-600" width="10" height="1500" fill="#FFFFFF" transform="rotate(25)"/>
+    <rect x="-60" y="-600" width="10" height="1500" fill="#FFFFFF" transform="rotate(25)"/>
+    <rect x="60" y="-600" width="10" height="1500" fill="#FFFFFF" transform="rotate(25)"/>
+    <rect x="180" y="-600" width="10" height="1500" fill="#FFFFFF" transform="rotate(25)"/>
+  </g>
+
+  <!-- Icono -->
+  <g transform="translate(40,30)">
+    <!-- cuerpo calendario -->
+    <rect x="0" y="70" width="170" height="110" rx="22" fill="#2E3A59"/>
+    <rect x="0" y="70" width="170" height="35" rx="22" fill="#3A4768"/>
+    <!-- rejilla -->
+    <g fill="#485674" transform="translate(18,125)">
+      <rect width="26" height="20" rx="4"/>
+      <rect x="34" width="26" height="20" rx="4"/>
+      <rect x="68" width="26" height="20" rx="4"/>
+      <rect x="102" width="26" height="20" rx="4"/>
+    </g>
+    <!-- kettlebell -->
+    <g transform="translate(70,10)">
+      <path d="M60,60c-16,0 -28,12 -28,28v20c0,16 12,28 28,28s28,-12 28,-28V88c0,-16 -12,-28 -28,-28z" fill="#D7263D"/>
+      <path d="M42,46c0,-12 9,-20 18,-20 9,0 18,8 18,20h-8c0,-6 -5,-12 -10,-12 -5,0 -10,6 -10,12h-8z" fill="#B61E33"/>
+    </g>
+    <!-- check -->
+    <path d="M6,170 l18,18 36,-36 8,8 -44,44 -26,-26z" fill="#00C2A8"/>
+  </g>
+
+  <!-- Logotipo: Wodify Plus -->
+  <g transform="translate(260,155)">
+    <text x="0" y="0" font-family="'Inter','Rubik','Segoe UI',Arial" font-weight="700" font-size="56" fill="#E8EAED">Wodify</text>
+    <text x="250" y="0" font-family="'Inter','Rubik','Segoe UI',Arial" font-weight="600" font-size="56" fill="#A7B0C0">Plus</text>
+  </g>
+
+  <!-- brillo suave -->
+  <rect x="0" y="0" width="1080" height="240" fill="url(#shine)"/>
+</svg>
+
+
+
+
+

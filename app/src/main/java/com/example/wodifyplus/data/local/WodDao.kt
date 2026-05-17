@@ -41,5 +41,14 @@ interface WodDao {
 
     @Query("DELETE FROM wods WHERE fecha < :fecha")
     suspend fun deleteOldWods(fecha: String)
+    
+    @Query("DELETE FROM wods WHERE gimnasio IN (:sources)")
+    suspend fun deleteWodsBySource(sources: List<String>)
+    
+    @Query("SELECT * FROM wods WHERE gimnasio = :gimnasio AND fecha = :fecha")
+    suspend fun getWodByGimnasioAndDate(gimnasio: String, fecha: String): WodEntity?
+    
+    @Query("DELETE FROM wods WHERE gimnasio IN (:sources) AND seleccionado = 0 AND completada = 0")
+    suspend fun deleteUnselectedUncompletedWodsBySource(sources: List<String>)
 }
 

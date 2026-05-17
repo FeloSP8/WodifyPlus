@@ -10,43 +10,58 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalDateTime
 
-class NextActivityViewModel(application: Application) : AndroidViewModel(application) {
-    
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class NextActivityViewModel @Inject constructor(
+    application: Application,
     private val repository: WodRepository
-    
+) : AndroidViewModel(application) {
+
+    private val _weeklyActivities = MutableStateFlow<Map<LocalDate, List<Wod>>>(emptyMap())
+    val weeklyActivities: StateFlow<Map<LocalDate, List<Wod>>> = _weeklyActivities.asStateFlow()
+
     init {
-        val wodDao = WodDatabase.getDatabase(application).wodDao()
-        repository = WodRepository(wodDao)
+        loadWeeklyActivities()
     }
-    
-    private val _nextActivity = MutableStateFlow<Wod?>(null)
-    val nextActivity: StateFlow<Wod?> = _nextActivity.asStateFlow()
-    
-    init {
-        loadNextActivity()
-    }
-    
-    fun loadNextActivity() {
+
+    fun loadWeeklyActivities() {
         viewModelScope.launch {
             repository.selectedWods.collect { wods ->
-                // Buscar el próximo WOD con hora
                 val now = LocalDateTime.now()
-                val nextWod = wods
-                    .filter { it.hora != null && !it.completada }
-                    .mapNotNull { wod ->
-                        wod.hora?.let { hora ->
-                            val wodDateTime = wod.fecha.atTime(hora)
-                            if (wodDateTime.isAfter(now)) wod to wodDateTime else null
+                val today = now.toLocalDate()
+                val endDate = today.with(DayOfWeek.SUNDAY).plusWeeks(1)
+
+                // Regla: una actividad aparece hasta que llega su hora planificada.
+                // - Con hora: visible si fecha+hora > ahora (aún no ha llegado su momento)
+                // - Sin hora: visible todo el día (fecha >= hoy)
+                // Completada o no es irrelevante — la hora manda.
+                val filteredWods = wods
+                    .filter { wod ->
+                        val wodDateTime = if (wod.hora != null) {
+                            wod.fecha.atTime(wod.hora)
+                        } else {
+                            wod.fecha.atStartOfDay()
                         }
+                        wodDateTime.isAfter(now) && !wod.fecha.isAfter(endDate)
                     }
-                    .minByOrNull { it.second }
-                    ?.first
-                
-                _nextActivity.value = nextWod
+                    .sortedWith(compareBy({ it.fecha }, { it.hora }))
+
+                _weeklyActivities.value = filteredWods.groupBy { it.fecha }
             }
         }
+    }
+
+    // Mantener compatibilidad: obtener la próxima actividad
+    fun getNextActivity(): Wod? {
+        return _weeklyActivities.value
+            .flatMap { it.value }
+            .firstOrNull()
     }
 }
 

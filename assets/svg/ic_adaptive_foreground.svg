@@ -1,0 +1,32 @@
+<svg width="108" height="108" viewBox="0 0 108 108" xmlns="http://www.w3.org/2000/svg">
+  <!-- Calendario base -->
+  <path fill="#2E3A59" d="M18,28h72a6,6 0 0 1 6,6v50a6,6 0 0 1 -6,6H18a6,6 0 0 1 -6,-6V34a6,6 0 0 1 6,-6z"/>
+  <!-- Línea superior (barra del calendario) -->
+  <path fill="#3A4768" d="M12,34h84v12H12z"/>
+  <!-- Anillas -->
+  <path fill="#E8EAED" d="M30,22h6v12h-6zM72,22h6v12h-6z"/>
+
+  <!-- Rejilla 7 días (simplificada a 7 bloques) -->
+  <g transform="translate(0,52)">
+    <path fill="#485674" d="M18,0h8v10h-8z"/>
+    <path fill="#485674" d="M32,0h8v10h-8z"/>
+    <path fill="#485674" d="M46,0h8v10h-8z"/>
+    <path fill="#485674" d="M60,0h8v10h-8z"/>
+    <path fill="#485674" d="M74,0h8v10h-8z"/>
+    <path fill="#485674" d="M88,0h8v10h-8z"/>
+    <path fill="#485674" d="M4,0h8v10h-8z"/>
+  </g>
+
+  <!-- Kettlebell -->
+  <path fill="#D7263D" d="M54,40c-8,0 -14,6 -14,14v10c0,8 6,14 14,14s14,-6 14,-14V54c0,-8 -6,-14 -14,-14z"/>
+  <path fill="#B61E33" d="M44,46c0,-6 5,-10 10,-10s10,4 10,10h-4c0,-3 -3,-6 -6,-6s-6,3 -6,6h-4z"/>
+
+  <!-- Check de día planificado -->
+  <path fill="#00C2A8" d="M30,70l6,6 12,-12 4,4 -16,16 -10,-10z"/>
+</svg>
+
+
+
+
+
+

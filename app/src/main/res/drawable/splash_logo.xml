@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp" 
+    android:height="120dp"
+    android:viewportWidth="120" 
+    android:viewportHeight="120">
+    
+    <!-- Fondo circular -->
+    <path
+        android:fillColor="#2E3A59"
+        android:pathData="M60,10c-27.6,0 -50,22.4 -50,50s22.4,50 50,50s50,-22.4 50,-50S87.6,10 60,10z"/>
+    
+    <!-- Icono de calendario simple -->
+    <path
+        android:fillColor="#3A4768"
+        android:pathData="M30,40h60v40H30z"/>
+    
+    <!-- Línea superior -->
+    <path
+        android:fillColor="#485674"
+        android:pathData="M30,40h60v12H30z"/>
+    
+    <!-- Kettlebell simple -->
+    <path
+        android:fillColor="#D7263D"
+        android:pathData="M60,62c-4.4,0 -8,3.6 -8,8s3.6,8 8,8s8,-3.6 8,-8S64.4,62 60,62z"/>
+    
+    <!-- Plus -->
+    <path
+        android:fillColor="#00C2A8"
+        android:pathData="M56,90h8v2H56z"/>
+    <path
+        android:fillColor="#00C2A8"
+        android:pathData="M59,87h2v8H59z"/>
+</vector>
+

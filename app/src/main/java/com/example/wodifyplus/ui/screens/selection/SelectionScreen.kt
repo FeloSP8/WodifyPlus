@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.wodifyplus.data.models.Wod
 import com.example.wodifyplus.data.preferences.PreferencesManager
 import com.example.wodifyplus.ui.components.TimePickerDialog
@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter
 fun SelectionScreen(
     onNavigateToCalendar: () -> Unit,
     onNavigateBack: () -> Unit,
-    viewModel: SelectionViewModel = viewModel()
+    viewModel: SelectionViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val preferencesManager = remember { PreferencesManager(context) }

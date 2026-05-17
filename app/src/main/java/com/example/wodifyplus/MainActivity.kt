@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -21,7 +22,11 @@ import com.example.wodifyplus.notifications.NotificationHelper
 import com.example.wodifyplus.ui.components.BottomNavBar
 import com.example.wodifyplus.ui.navigation.NavGraph
 import com.example.wodifyplus.ui.theme.WodifyPlusTheme
+import com.example.wodifyplus.widget.WodWidgetProvider
 
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -32,13 +37,21 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Refrescar el widget cada vez que el usuario abre o vuelve a la app
+        WodWidgetProvider.updateAllWidgets(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Edge to edge
         enableEdgeToEdge()
-        WindowCompat.getInsetsController(window, window.decorView)
-            .isAppearanceLightStatusBars = true
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
 
         // Inicializar Python
         if (!Python.isStarted()) {
@@ -69,6 +82,7 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    contentWindowInsets = ScaffoldDefaults.contentWindowInsets,
                     bottomBar = {
                         BottomNavBar(navController = navController)
                     }

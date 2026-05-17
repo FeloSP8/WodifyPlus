@@ -3,15 +3,16 @@ package com.example.wodifyplus.ui.screens.stats
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wodifyplus.data.local.WodDatabase
 import com.example.wodifyplus.data.models.Wod
 import com.example.wodifyplus.data.repository.WodRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 
 data class StatsData(
     val totalWorkouts: Int = 0,
@@ -26,14 +27,11 @@ enum class StatsPeriod {
     WEEK, MONTH, YEAR
 }
 
-class StatsViewModel(application: Application) : AndroidViewModel(application) {
-
+@HiltViewModel
+class StatsViewModel @Inject constructor(
+    application: Application,
     private val repository: WodRepository
-    
-    init {
-        val wodDao = WodDatabase.getDatabase(application).wodDao()
-        repository = WodRepository(wodDao)
-    }
+) : AndroidViewModel(application) {
 
     private val _statsData = MutableStateFlow(StatsData())
     val statsData: StateFlow<StatsData> = _statsData.asStateFlow()
@@ -84,5 +82,3 @@ class StatsViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 }
-
-

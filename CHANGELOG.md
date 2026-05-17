@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.2 (2025-10-09)
+
+- **FIX**: Actividades del domingo ahora aparecen correctamente en selección
+- **FIX**: Edge-to-edge completo - app usa toda la pantalla
+- **FIX**: Barra de estado visible (hora, batería, señal)
+- **IMPROVEMENT**: Logging detallado para debugging de filtros
+- **IMPROVEMENT**: Tema mejorado para edge-to-edge
+- **IMPROVEMENT**: Colores optimizados para modo oscuro/claro
+
 ## 1.0.0 (2025-10-07)
 
 - Kotlin 2.0.21 y KSP 2.0.21-1.0.28

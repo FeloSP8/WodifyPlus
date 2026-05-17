@@ -752,32 +752,50 @@ def parsear_fecha_api(fecha_str, when_str=None):
 def login_aimharder(mail, pw, log_func=print):
     """
     Realiza login en aimharder.com y devuelve una sesión autenticada con las cookies necesarias.
+    Usa la nueva API JSON de AimHarder (mayo 2026+).
     """
-    login_url = "https://aimharder.com/login"
+    import secrets
+    
+    session = requests.Session()
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+    })
+    
+    # Paso 1: GET a la página de login para establecer cookies de sesión (PHPSESSID, AWS)
+    session.get("https://aimharder.com/login")
+    
+    # Paso 2: Login con la nueva API JSON
+    # AimHarder migró a POST /api/login con JSON {username, password, fingerprint}
+    fingerprint = secrets.token_hex(25)  # 50 caracteres hex aleatorios
+    login_url = "https://aimharder.com/api/login"
     payload = {
-        "loginfingerprint": "2j6b4pq9hvvugw220ahs776i34r08yft3zenjt404m2om7nrcb",  # Puede que necesite ser dinámico, pero probamos fijo
-        "loginiframe": "0",
-        "mail": mail,
-        "pw": pw,
-        "login": "Log in"
+        "username": mail,
+        "password": pw,
+        "fingerprint": fingerprint
     }
     headers_login = {
-        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
         "Origin": "https://aimharder.com",
         "Referer": "https://aimharder.com/login",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
     }
-    session = requests.Session()
-    resp = session.post(login_url, data=payload, headers=headers_login, allow_redirects=True)
+    
+    resp = session.post(login_url, json=payload, headers=headers_login)
     log_func(f"[LOGIN] Status code: {resp.status_code}")
-    log_func(f"[LOGIN] Set-Cookie: {resp.headers.get('set-cookie')}")
+    
     # Verificar si la cookie amhrdrauth está en la sesión
     if 'amhrdrauth' in session.cookies.get_dict():
         log_func("[LOGIN] Autenticación exitosa, cookie amhrdrauth presente.")
     else:
         log_func("[LOGIN] Advertencia: No se encontró cookie amhrdrauth. Puede que el login haya fallado.")
+        # Intentar parsear el error de la respuesta
+        try:
+            error_data = resp.json()
+            log_func(f"[LOGIN] Respuesta: {error_data}")
+        except Exception:
+            log_func(f"[LOGIN] Respuesta: {resp.text[:200]}")
+    
     return session
 
 def main(debug_abril=False, log_func=print):

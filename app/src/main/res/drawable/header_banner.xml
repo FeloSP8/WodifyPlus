@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp" 
+    android:height="40dp"
+    android:viewportWidth="200" 
+    android:viewportHeight="40">
+
+    <!-- Fondo -->
+    <rect width="200" height="40" fill="#0E1116"/>
+
+    <!-- Texto simplificado -->
+    <rect x="20" y="10" width="160" height="20" rx="4" fill="#2E3A59"/>
+    
+    <!-- Icono simple -->
+    <circle cx="30" cy="20" r="6" fill="#D7263D"/>
+    <rect x="40" y="15" width="60" height="10" rx="2" fill="#3A4768"/>
+    
+    <!-- Plus -->
+    <rect x="120" y="18" width="12" height="4" rx="2" fill="#00C2A8"/>
+    <rect x="124" y="14" width="4" height="12" rx="2" fill="#00C2A8"/>
+</vector>

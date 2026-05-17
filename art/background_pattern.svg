@@ -1,0 +1,27 @@
+<svg width="1440" height="3040" viewBox="0 0 1440 3040" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0E1116"/>
+      <stop offset="100%" stop-color="#1A1F29"/>
+    </linearGradient>
+    <g id="tile">
+      <!-- contorno calendario + kettlebell muy suave -->
+      <g opacity="0.05">
+        <rect x="0" y="18" width="90" height="58" rx="12" fill="#FFFFFF"/>
+        <rect x="0" y="18" width="90" height="18" rx="12" fill="#FFFFFF"/>
+        <circle cx="45" cy="12" r="20" fill="#FFFFFF"/>
+        <path d="M12,58 l12,12 22,-22 6,6 -28,28 -16,-16z" fill="#FFFFFF"/>
+      </g>
+    </g>
+    <pattern id="grid" patternUnits="userSpaceOnUse" width="160" height="160">
+      <use href="#tile" x="18" y="20"/>
+    </pattern>
+  </defs>
+  <rect width="1440" height="3040" fill="url(#bg)"/>
+  <rect width="1440" height="3040" fill="url(#grid)"/>
+</svg>
+
+
+
+
+

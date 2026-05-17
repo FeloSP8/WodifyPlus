@@ -9,8 +9,20 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import javax.inject.Inject
 
-class WodRepository(private val wodDao: WodDao) {
+class WodRepository @Inject constructor(private val wodDao: WodDao) {
+
+    companion object {
+        // Acepta "HH:mm" y "HH:mm:ss" — ISO_LOCAL_TIME omite segundos cuando son 0
+        private val TIME_FORMATTER = DateTimeFormatterBuilder()
+            .appendPattern("HH:mm")
+            .optionalStart()
+            .appendPattern(":ss")
+            .optionalEnd()
+            .toFormatter()
+    }
 
     // Conversión Entity -> Model
     private fun WodEntity.toWod(): Wod {
@@ -21,7 +33,7 @@ class WodRepository(private val wodDao: WodDao) {
             gimnasio = gimnasio,
             contenido = contenido,
             contenidoHtml = contenidoHtml,
-            hora = hora?.let { LocalTime.parse(it) },
+            hora = hora?.let { LocalTime.parse(it, TIME_FORMATTER) },
             notificacionActiva = notificacionActiva,
             seleccionado = seleccionado,
             completada = completada,
@@ -42,7 +54,7 @@ class WodRepository(private val wodDao: WodDao) {
             gimnasio = gimnasio,
             contenido = contenido,
             contenidoHtml = contenidoHtml,
-            hora = hora?.format(DateTimeFormatter.ISO_LOCAL_TIME),
+            hora = hora?.format(DateTimeFormatter.ofPattern("HH:mm")),
             notificacionActiva = notificacionActiva,
             seleccionado = seleccionado,
             completada = completada,
@@ -109,6 +121,65 @@ class WodRepository(private val wodDao: WodDao) {
     suspend fun deleteOldWods(beforeDate: LocalDate) {
         val dateStr = beforeDate.format(DateTimeFormatter.ISO_LOCAL_DATE)
         wodDao.deleteOldWods(dateStr)
+    }
+    
+    suspend fun deleteWodsBySource(sources: List<String>) {
+        wodDao.deleteWodsBySource(sources)
+    }
+    
+    suspend fun updateOrInsertCustomWods(wods: List<Wod>) {
+        wods.forEach { wod ->
+            val existingWod = wodDao.getWodByGimnasioAndDate(
+                wod.gimnasio, 
+                wod.fecha.format(DateTimeFormatter.ISO_LOCAL_DATE)
+            )
+            
+            if (existingWod != null) {
+                // Actualizar WOD existente, preservando datos de selección
+                val updatedWod = existingWod.copy(
+                    contenido = wod.contenido,
+                    contenidoHtml = wod.contenidoHtml
+                )
+                wodDao.updateWod(updatedWod)
+            } else {
+                // Insertar nuevo WOD
+                wodDao.insertWod(wod.toEntity())
+            }
+        }
+    }
+    
+    /**
+     * Actualiza o inserta WODs de fuentes externas (scraped), preservando:
+     * - WODs completados (completada = true) con todos sus datos
+     * - WODs seleccionados (seleccionado = true) con hora y notificaciones
+     * - Solo actualiza el contenido de WODs que no están completados ni seleccionados
+     */
+    suspend fun updateOrInsertScrapedWods(wods: List<Wod>, sources: List<String>) {
+        // Primero, borrar solo los WODs que NO están seleccionados NI completados
+        wodDao.deleteUnselectedUncompletedWodsBySource(sources)
+        
+        // Luego, hacer merge inteligente de los nuevos WODs
+        wods.forEach { newWod ->
+            val existingWod = wodDao.getWodByGimnasioAndDate(
+                newWod.gimnasio,
+                newWod.fecha.format(DateTimeFormatter.ISO_LOCAL_DATE)
+            )
+            
+            if (existingWod != null) {
+                // WOD existente: preservar datos importantes
+                val updatedWod = existingWod.copy(
+                    contenido = newWod.contenido,
+                    contenidoHtml = newWod.contenidoHtml,
+                    diaSemana = newWod.diaSemana
+                    // Preservar: seleccionado, completada, hora, notificacionActiva,
+                    // fechaCompletado, caloriasQuemadas, distanciaKm, duracionMinutos, notas
+                )
+                wodDao.updateWod(updatedWod)
+            } else {
+                // Nuevo WOD: insertar normalmente
+                wodDao.insertWod(newWod.toEntity())
+            }
+        }
     }
 }
 

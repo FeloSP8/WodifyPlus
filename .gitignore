@@ -18,3 +18,9 @@ local.properties
 app/src/main/python/.env
 app/src/main/python/__pycache__/
 *.pyc
+
+# Credenciales
+.env
+app/src/main/python/.env
+*.logcat
+build.log

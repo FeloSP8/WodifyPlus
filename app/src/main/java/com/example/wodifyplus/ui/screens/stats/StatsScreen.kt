@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
@@ -24,7 +24,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 @Composable
 fun StatsScreen(
     onNavigateBack: () -> Unit,
-    viewModel: StatsViewModel = viewModel()
+    viewModel: StatsViewModel = hiltViewModel()
 ) {
     val statsData by viewModel.statsData.collectAsState()
     val selectedPeriod by viewModel.selectedPeriod.collectAsState()

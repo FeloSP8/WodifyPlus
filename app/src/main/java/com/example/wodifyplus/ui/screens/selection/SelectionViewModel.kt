@@ -18,18 +18,21 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZonedDateTime
+import java.time.ZoneId
 
-class SelectionViewModel(application: Application) : AndroidViewModel(application) {
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-    private val repository: WodRepository
-    private val activityConfigDao = WodDatabase.getDatabase(application).activityConfigDao()
-    private val preferencesManager = PreferencesManager(application)
-
-    init {
-        val wodDao = WodDatabase.getDatabase(application).wodDao()
-        repository = WodRepository(wodDao)
-    }
+@HiltViewModel
+class SelectionViewModel @Inject constructor(
+    application: Application,
+    private val repository: WodRepository,
+    private val activityConfigDao: com.example.wodifyplus.data.local.ActivityConfigDao,
+    private val preferencesManager: PreferencesManager
+) : AndroidViewModel(application) {
 
     private val _wodsByDate = MutableStateFlow<Map<LocalDate, List<Wod>>>(emptyMap())
     val wodsByDate: StateFlow<Map<LocalDate, List<Wod>>> = _wodsByDate.asStateFlow()
@@ -55,12 +58,52 @@ class SelectionViewModel(application: Application) : AndroidViewModel(applicatio
         wods: List<Wod>,
         configs: List<ActivityConfigEntity>
     ): List<Wod> {
+        android.util.Log.d("SelectionViewModel", "Filtering ${wods.size} WODs with ${configs.size} configs")
+        configs.forEach { config ->
+            android.util.Log.d("SelectionViewModel", "Config: ${config.name}, enabled: ${config.isEnabled}, sunday: ${config.sunday}")
+        }
+        
+        // Filtrar por rango de fechas (usar zona horaria del sistema)
+        val now = ZonedDateTime.now(ZoneId.systemDefault())
+        val today = now.toLocalDate()
+        val currentDayOfWeek = today.dayOfWeek
+        val currentHour = now.hour
+
+        android.util.Log.d("SelectionViewModel", "Current time: $now (hour: $currentHour, day: $currentDayOfWeek)")
+
+        // Determinar la semana activa
+        val (startDate, endDate) = if (currentDayOfWeek == DayOfWeek.SUNDAY && currentHour >= 12) {
+            // Domingo después de las 12:00 → próxima semana (lunes a domingo)
+            val nextMonday = today.plusDays(1)
+            val nextSunday = nextMonday.plusDays(6)
+            nextMonday to nextSunday
+        } else {
+            // Cualquier otro día → semana actual (desde el lunes hasta el domingo)
+            val mondayOfWeek = today.with(DayOfWeek.MONDAY)
+            val sundayOfWeek = mondayOfWeek.plusDays(6)
+            mondayOfWeek to sundayOfWeek
+        }
+
+        android.util.Log.d("SelectionViewModel", "Date range: $startDate to $endDate (today: $today ${currentDayOfWeek}, hour: $currentHour)")
+        
         return wods.filter { wod ->
-            val config = configs.find { it.name == wod.gimnasio }
-            if (config == null || !config.isEnabled) return@filter false
+            // Filtrar por rango de fechas
+            if (wod.fecha.isBefore(startDate) || wod.fecha.isAfter(endDate)) {
+                android.util.Log.d("SelectionViewModel", "Filtered out by date: ${wod.gimnasio} - ${wod.fecha} (outside range $startDate to $endDate)")
+                return@filter false
+            }
             
-            // Verificar si el día está configurado
-            isDayEnabled(wod.fecha.dayOfWeek, config)
+            val config = configs.find { it.name == wod.gimnasio }
+            android.util.Log.d("SelectionViewModel", "WOD: ${wod.gimnasio} - ${wod.fecha.dayOfWeek}, config found: ${config != null}")
+            
+            if (config == null || !config.isEnabled) {
+                android.util.Log.d("SelectionViewModel", "Filtered out: ${wod.gimnasio} (no config or disabled)")
+                return@filter false
+            }
+            
+            val dayEnabled = isDayEnabled(wod.fecha.dayOfWeek, config)
+            android.util.Log.d("SelectionViewModel", "Day ${wod.fecha.dayOfWeek} enabled for ${wod.gimnasio}: $dayEnabled")
+            dayEnabled
         }
     }
     
